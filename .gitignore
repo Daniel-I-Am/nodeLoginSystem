@@ -5,3 +5,4 @@
 # *.[oa]
 # *~
 node_modules/*
+*.sqlite3
