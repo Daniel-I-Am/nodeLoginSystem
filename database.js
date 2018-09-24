@@ -2,14 +2,6 @@ var NoSQL = require('nosql');
 var db = NoSQL.load('./database.nosql');
  
 // db === Database instance <https://docs.totaljs.com/latest/en.html#api~Database>
- 
-// db.find().make(function(filter) {
-//     filter.where('age', '>', 20);
-//     filter.where('removed', false);
-//     filter.callback(function(err, response) {
-//         console.log(err, response);
-//     });
-// });
 
 function request(url) {
     console.log(url);
@@ -24,8 +16,27 @@ function request(url) {
         pair = d.split('=');
         data[pair[0]] = pair[1];
     });
-    response = "asd"
-    return `{"type": "${data.requestType}", "data": "${data.id}"}`
+    response = "asd";
+    switch (data.requestType) {
+        case "load":
+            return loadSaveGame(data.id);
+        default:
+            return '{"error": "Cannot understand request type."}';
+    }
 }
 
-module.exports = {"request": request}
+function loadSaveGame(uid) {
+    db.find().make(function(filter) {
+        filter.where('id', uid);
+        filter.callback(function(err, response) {
+            if (err == null) {
+                return response;
+            } else {
+                return '{"error": "' + err + '"}';
+            }
+        });
+    });
+    return '{"error": "Errored on database extraction"}';
+}
+
+module.exports = {"request": request};
