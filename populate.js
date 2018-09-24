@@ -6,7 +6,7 @@ db.serialize(function () {
     var stmt = db.prepare('INSERT INTO saves (id, content) VALUES (?, ?)');
 
     for (let i = 0; i < 10; i++) {
-        stmt.run(i.toString(), "'someText" + i.toString() + "'");
+        stmt.run(i.toString(), "someText" + i.toString());
     }
 
     stmt.finalize();
