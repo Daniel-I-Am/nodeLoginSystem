@@ -8,7 +8,7 @@ const port = 8080;
 const server = http.createServer((req, res) => {
     //Set the response HTTP header with HTTP status and Content type
     res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Content-Type', 'application/json');
     res.end(db.request(req.url));
 });
 

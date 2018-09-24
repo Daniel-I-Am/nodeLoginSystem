@@ -13,6 +13,19 @@ var db = NoSQL.load('./database.nosql');
 
 function request(url) {
     console.log(url);
+
+    var queryparams = url.split('?')[1];
+    var params = queryparams.split('&');
+
+    var pair = null,
+        data = [];
+
+    params.forEach(function(d) {
+        pair = d.split('=');
+        data[pair[0]] = pair[1];
+    });
+    response = "asd"
+    return `{"type": "${data.requestType}", "data": "${data.id}"}`
 }
 
 module.exports = {"request": request}
