@@ -1,24 +1,11 @@
 const sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('./database.sqlite3');
 
-db.serialize(function () {
-    db.each('SELECT * FROM saves', function (err, row) {
-        console.log(row.id + ": " + row.content)
-    })
-})
-  
-  db.close()
-
-/*var NoSQL = require('nosql');
-var db = NoSQL.load('./database.nosql');
- 
-// db === Database instance <https://docs.totaljs.com/latest/en.html#api~Database>
-
-function request(url) {
+async function request(url, callback) {
     console.log(url);
 
     var queryparams = url.split('?')[1];
-    if (queryparams == undefined) return;
+    if (queryparams == undefined) return '{"error": "Cannot understand request type."}';
     var params = queryparams.split('&');
 
     var pair = null,
@@ -29,9 +16,9 @@ function request(url) {
         data[pair[0]] = pair[1];
     });
     response = "asd";
-    switch (data.requestType) {
+    switch (data.type) {
         case "load":
-            return loadSaveGame(data.id);
+            return await loadSaveGame(data.id, callback);
         case "save":
             return saveSaveGame(data.id, data.content);
         default:
@@ -39,18 +26,21 @@ function request(url) {
     }
 }
 
-function loadSaveGame(uid) {
-    db.find().make(function(filter) {
-        filter.where('id', uid);
-        filter.callback(function(err, response) {
+async function loadSaveGame(uid, callback) {
+    if (uid == null) return '{"error": "No id specified"}';
+    var timeout = setTimeout(function() {
+        callback('{"error": "timeout"}')
+    }, 1000)
+    await db.serialize(function() {
+        db.each("SELECT * FROM saves WHERE id='" + Number(uid) + "'", function(err, row) {
+            clearTimeout(timeout);
             if (err == null) {
-                return response;
+                callback('{"' + row.id + '": "' + row.content + '"}');
             } else {
-                return '{"error": "' + err + '"}';
+                callback('{"error": "' + err.message + '"}');
             }
         });
     });
-    return '{"error": "Errored on database extraction"}';
 }
 
 function saveSaveGame(uid, data) {
@@ -68,5 +58,8 @@ function saveSaveGame(uid, data) {
     return '{"error": "Errored on database insertion"}';
 }
 
-module.exports = {"request": request};
-*/
+function closeDB() {
+    db.close()
+}
+
+module.exports = {"request": request, "closeDB": closeDB};
