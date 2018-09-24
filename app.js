@@ -1,4 +1,4 @@
-/*var NoSQL = require('nosql');
+var NoSQL = require('nosql');
 var nosql = NoSQL.load('./database.nosql');
  
 // db === Database instance <https://docs.totaljs.com/latest/en.html#api~Database>
@@ -9,5 +9,4 @@ db.find().make(function(filter) {
     filter.callback(function(err, response) {
         console.log(err, response);
     });
-});*/
-console.log("works")
+});
