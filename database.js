@@ -18,11 +18,11 @@ async function request(url, callback) {
     response = "asd";
     switch (data.type) {
         case "load":
-            return await loadSaveGame(data.id, callback);
+            return loadSaveGame(data.id, callback);
         case "save":
-            return saveSaveGame(data.id, data.content);
+            return saveSaveGame(data.id, data.content, callback);
         default:
-            return '{"error": "Cannot understand request type."}';
+            return callback('{"error": "Cannot understand request type."}');
     }
 }
 
@@ -43,19 +43,18 @@ async function loadSaveGame(uid, callback) {
     });
 }
 
-function saveSaveGame(uid, data) {
-    db.insert()
-    db.find().make(function(filter) {
-        filter.where('id', uid);
-        filter.callback(function(err, response) {
-            if (err == null) {
-                return response;
-            } else {
-                return '{"error": "' + err + '"}';
-            }
-        });
+async function saveSaveGame(uid, data, callback) {
+    if (uid == null) return '{"error": "No id specified"}';
+    var timeout = setTimeout(function() {
+        callback('{"error": "timeout"}')
+    }, 1000)
+    db.serialize(function() {
+        let stmt = db.prepare("insert or replace into saves (id, content) values (?, ?)");
+        stmt.run(Number(uid), data);
+        stmt.finalize();
+        clearTimeout(timeout);
+        callback('{"error": null}');
     });
-    return '{"error": "Errored on database insertion"}';
 }
 
 function closeDB() {
