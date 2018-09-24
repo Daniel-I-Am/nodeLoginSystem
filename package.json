@@ -1,0 +1,7 @@
+{
+  "requires": true,
+  "lockfileVersion": 1,
+  "dependencies": {
+    "nosql": "^6.1.0"
+  }
+}
