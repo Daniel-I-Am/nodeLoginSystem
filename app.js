@@ -10,3 +10,5 @@ db.find().make(function(filter) {
         console.log(err, response);
     });
 });
+
+var nosql = NoSQL.load('./database.nosql');
