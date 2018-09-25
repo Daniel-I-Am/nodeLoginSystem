@@ -1,7 +1,8 @@
 // load HTTP module
 const http = require("http");
-// import fs module
+// import fs and path module
 const fs = require("fs");
+//const path = require('path')
 // import our own methods
 const db = require("./database.js")
 // define on which hostname and port the server will run on
@@ -14,14 +15,15 @@ const server = http.createServer((req, res) => {
     // in laymans terms, say that the server can handle the request properly
     res.statusCode = 200;
     // define the content type to be JSON, meaning the response should be interpreted as JSON by the browser/application requesting the aapie
-    res.setHeader('Content-Type', 'application/json');
     // call the imported request method and give `res.end` (the methods needed to send data to the client) as a callback function, meaning we can use async methods
     let url = req.url;
     let path = url.split("?")[0];
-    if (fs.existsSync(path)) {
-        console.log("I need to read and send", path)
+    if (fs.existsSync(__dirname + path)) {
+        console.log("I need to read and send", __dirname + path);
+        res.setHeader('Content-Type', 'text/html');
+        res.end(fs.readFileSync(__dirname + path));
     } else {
-        db.request(req.url, function(response) {res.end(response);});
+        db.request(req.url, function(response) {res.setHeader('Content-Type', 'application/json'); res.end(response);});
     }
 });
 
