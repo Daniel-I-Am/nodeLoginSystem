@@ -71,7 +71,7 @@ async function saveSaveGame(uid, data, callback) {
     // start DB interaction
     db.serialize(function() {
         // use some SQL magic to insert a new value into the table, but if the ID already exist, replace the existing save slot
-        let stmt = db.prepare("insert or replace into saves (id, content) values (?, ?)");
+        let stmt = db.prepare("INSERT OR REPLACE INTO saves (id, content) VALUES (?, ?)");
         // execute prepared statement with our data
         stmt.run(Number(uid), data);
         // finish up query
