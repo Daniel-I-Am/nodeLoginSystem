@@ -1,4 +1,6 @@
-db = require("./database.js").database;
+const db = require("./database.js").database;
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 function register(request, callback) {
     let body = '';
@@ -17,13 +19,17 @@ function register(request, callback) {
             pair = d.split('=');
             data[pair[0]] = pair[1];
         });
-        saveUser(data)
+        let username = data.username,
+            plainTextPassword = data.password;
+        bcrypt.genSalt(saltRounds, function(err, salt) {
+            bcrypt.hash(plainTextPassword, salt, function(err, hash) {
+                saveUser(username, hash);
+            });
+        });
     });
 }
 
-function saveUser(data) {
-    let username = data.username,
-        password = data.password;
+function saveUser(username, password) {
     if (!username || !password) {
         callback('application/json', '{"error": "Username or password not provided"}');
         return;
