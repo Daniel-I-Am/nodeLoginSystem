@@ -38,9 +38,9 @@ async function request(url, callback) {
     }
 }
 
-// function to load data from database
+// function to load pdata from database
 async function loadSaveGame(uid, callback) {
-    if (uid == null) return '{"error": "No id specified"}';
+    if (uid == null) { callback('{"error": "No id specified"}'); return; }
     // set a timeout callback, we cancel this if the request is handled
     var timeout = setTimeout(function() {
         // return a json with error message
@@ -63,7 +63,7 @@ async function loadSaveGame(uid, callback) {
 
 /// function to save data to database
 async function saveSaveGame(uid, data, callback) {
-    if (uid == null) return '{"error": "No id specified"}';
+    if (uid == null) { callback('{"error": "No id specified"}'); return; }
     // once again, set a timeout callback, we cancel that if everything's handled properly
     var timeout = setTimeout(function() {
         callback('{"error": "timeout"}')
