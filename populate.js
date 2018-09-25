@@ -6,9 +6,9 @@ var db = new sqlite3.Database('./database.sqlite3');
 // start DB interactionn
 db.serialize(function () {
     // if we parse a `d` value, drop current table
-    if (process.argv[2] == "d" || process.argv[2] == "cd" || process.argv[2] == "dc") { db.run('DROP TABLE saves'); }
+    if (process.argv[2].match(".*d.*")) { db.run('DROP TABLE saves'); }
     // if we parse a `c` value, create new table
-    if (process.argv[2] == "c" || process.argv[2] == "cd" || process.argv[2] == "dc") { db.run('CREATE TABLE saves (id INT UNIQUE, content TEXT)'); }
+    if (process.argv[2].match(".*c.*")) { db.run('CREATE TABLE saves (id INT UNIQUE, content TEXT)'); }
 
     // prepare insert statement
     var stmt = db.prepare('INSERT INTO saves (id, content) VALUES (?, ?)');
