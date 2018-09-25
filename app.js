@@ -50,6 +50,8 @@ const server = http.createServer((req, res) => {
             db.request(req.url, callback);
         } else if (path.endsWith("register")) {
             users.register(req, callback);
+        } else if (path.endsWith("login")) {
+            users.login(req, callback);
         } else {
             res.statusCode = 404;
             res.setHeader('Content-Type', 'text/plain');
