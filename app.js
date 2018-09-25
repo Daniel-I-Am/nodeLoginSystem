@@ -48,6 +48,7 @@ const server = http.createServer((req, res) => {
         if (path.endsWith("db")) {
             db.request(req.url, function(response) {res.setHeader('Content-Type', 'application/json'); res.end(response);});
         } else {
+            res.statusCode = 404;
             res.setHeader('Content-Type', 'text/plain');
             res.end("Sorry, we could not process your request. Resource `" + path + "` not understood.");
         }
