@@ -1,8 +1,7 @@
 // load HTTP module
 const http = require("http");
-// import fs and path module
+// import fs and module
 const fs = require("fs");
-//const path = require('path')
 // import our own methods
 const db = require("./database.js")
 // define on which hostname and port the server will run on
@@ -14,16 +13,32 @@ const server = http.createServer((req, res) => {
     // set the response HTTP header with HTTP status and Content type
     // in laymans terms, say that the server can handle the request properly
     res.statusCode = 200;
-    // define the content type to be JSON, meaning the response should be interpreted as JSON by the browser/application requesting the aapie
-    // call the imported request method and give `res.end` (the methods needed to send data to the client) as a callback function, meaning we can use async methods
+
+    // get the requested URL
     let url = req.url;
+    // split the file up to get everything *before* the GET params
     let path = url.split("?")[0];
+    // check if it ends with /` and append index.html
+    if (path.endsWith("/")) {
+        path = path + "index.html";
+    }
+    // check if file exists, if so, serve it, otherwise server something that needs to be processed server side
     if (fs.existsSync(__dirname + path)) {
-        console.log("I need to read and send", __dirname + path);
+        console.log("Sending", __dirname + path + "...");
+        // set header to html so browser interprets it as normal file
         res.setHeader('Content-Type', 'text/html');
+        // send content of file
         res.end(fs.readFileSync(__dirname + path));
     } else {
-        db.request(req.url, function(response) {res.setHeader('Content-Type', 'application/json'); res.end(response);});
+        // node API
+
+        // if we request a DB call, process it there
+        if (path.endsWith("db")) {
+            db.request(req.url, function(response) {res.setHeader('Content-Type', 'application/json'); res.end(response);});
+        } else {
+            res.setHeader('Content-Type', 'text/plain');
+            res.end("Sorry, we could not process your request. Resource `" + path + "` not understood.");
+        }
     }
 });
 
