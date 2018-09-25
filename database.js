@@ -38,7 +38,7 @@ async function request(url, callback) {
     }
 }
 
-// function to load pdata from database
+// function to load data from database
 async function loadSaveGame(uid, callback) {
     if (uid == null) { callback('{"error": "No id specified"}'); return; }
     // set a timeout callback, we cancel this if the request is handled
