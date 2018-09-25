@@ -8,10 +8,12 @@
 </head>
 <body>
     <main>
-        <form>
-            <input type=text />
-            <input type="password" />
+        <form method="POST" action="/register">
+            <input name="username" type="text" />
+            <input name="password" type="password" />
+            <input                 type="submit" />
         </form>
     </main>
+    <script src="./js/register.js"></script>
 </body>
 </html>
