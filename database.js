@@ -52,7 +52,7 @@ async function loadSaveGame(uid, callback) {
         db.each("SELECT * FROM saves WHERE id='" + Number(uid) + "'", function(err, row) {
             clearTimeout(timeout);
             if (err == null) {
-                callback('{"' + row.id + '": "' + row.content + '"}');
+                callback('{"id": ' + row.id + ', "user": "' + row.user + '", "content": "' + row.content + '"}');
             } else {
                 // if there's some kind of error, return the error as JSON
                 callback('{"error": "' + err.message + '"}');
