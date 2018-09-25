@@ -4,6 +4,7 @@ const http = require("http");
 const fs = require("fs");
 // import our own methods
 const db = require("./database.js")
+const users = require("./users.js")
 // define on which hostname and port the server will run on
 const hostname = '127.0.0.1';
 const port = 8080;
@@ -43,10 +44,12 @@ const server = http.createServer((req, res) => {
         res.end(fs.readFileSync(__dirname + "/public-html" + path));
     } else {
         // node API
-
+        callback = function(type, response) {res.setHeader('Content-Type', type); res.end(response);}
         // if we request a DB call, process it there
         if (path.endsWith("db")) {
-            db.request(req.url, function(response) {res.setHeader('Content-Type', 'application/json'); res.end(response);});
+            db.request(req.url, callback);
+        } else if (path.endsWith("register")) {
+            users.register(req, callback);
         } else {
             res.statusCode = 404;
             res.setHeader('Content-Type', 'text/plain');

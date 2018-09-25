@@ -12,7 +12,7 @@ async function request(url, callback) {
 
     // split up all GET parameters (the stuff behind a '?' in a link)
     var queryparams = url.split('?')[1];
-    if (queryparams == undefined) { callback('{"error": "Cannot understand request type."}'); return; }
+    if (queryparams == undefined) { callback('application/json', '{"error": "Cannot understand request type."}'); return; }
     var params = queryparams.split('&');
 
     // put all GET params into an array
@@ -34,17 +34,17 @@ async function request(url, callback) {
             return saveSaveGame(data.id, data.content, callback);
         // if we supply an invalid type
         default:
-            return callback('{"error": "Cannot understand request type."}');
+            return callback('application/json', '{"error": "Cannot understand request type."}');
     }
 }
 
 // function to load data from database
 async function loadSaveGame(uid, callback) {
-    if (uid == null) { callback('{"error": "No id specified"}'); return; }
+    if (uid == null) { callback('application/json', '{"error": "No id specified"}'); return; }
     // set a timeout callback, we cancel this if the request is handled
     var timeout = setTimeout(function() {
         // return a json with error message
-        callback('{"error": "timeout"}')
+        callback('application/json', '{"error": "timeout"}')
     }, 1000)
     // start database interaction
     await db.serialize(function() {
@@ -52,10 +52,10 @@ async function loadSaveGame(uid, callback) {
         db.each("SELECT * FROM saves WHERE id='" + Number(uid) + "'", function(err, row) {
             clearTimeout(timeout);
             if (err == null) {
-                callback('{"id": ' + row.id + ', "user": "' + row.user + '", "content": "' + row.content + '"}');
+                callback('application/json', '{"id": ' + row.id + ', "user": "' + row.user + '", "content": "' + row.content + '"}');
             } else {
                 // if there's some kind of error, return the error as JSON
-                callback('{"error": "' + err.message + '"}');
+                callback('application/json', '{"error": "' + err.message + '"}');
             }
         });
     });
@@ -63,10 +63,10 @@ async function loadSaveGame(uid, callback) {
 
 /// function to save data to database
 async function saveSaveGame(uid, data, callback) {
-    if (uid == null) { callback('{"error": "No id specified"}'); return; }
+    if (uid == null) { callback('application/json', '{"error": "No id specified"}'); return; }
     // once again, set a timeout callback, we cancel that if everything's handled properly
     var timeout = setTimeout(function() {
-        callback('{"error": "timeout"}')
+        callback('application/json', '{"error": "timeout"}')
     }, 1000)
     // start DB interaction
     db.serialize(function() {
@@ -79,7 +79,7 @@ async function saveSaveGame(uid, data, callback) {
         // cancel callback
         clearTimeout(timeout);
         // report back that there's no error in JSON
-        callback('{"error": null}');
+        callback('application/json', '{"error": null}');
     });
 }
 
