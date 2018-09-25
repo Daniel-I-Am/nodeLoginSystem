@@ -12,7 +12,7 @@ async function request(url, callback) {
 
     // split up all GET parameters (the stuff behind a '?' in a link)
     var queryparams = url.split('?')[1];
-    if (queryparams == undefined) callback('{"error": "Cannot understand request type."}'); return;
+    if (queryparams == undefined) { callback('{"error": "Cannot understand request type."}'); return; }
     var params = queryparams.split('&');
 
     // put all GET params into an array
