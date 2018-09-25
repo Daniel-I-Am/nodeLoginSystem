@@ -89,4 +89,4 @@ function closeDB() {
 }
 
 // export the important (and publically availble) methods
-module.exports = {"request": request, "closeDB": closeDB};
+module.exports = {"request": request, "closeDB": closeDB, "database": db};
