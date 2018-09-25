@@ -1,3 +1,5 @@
+db = require("./database.js");
+
 function register(request, callback) {
     let body = '';
     request.on('data', chunk => {
