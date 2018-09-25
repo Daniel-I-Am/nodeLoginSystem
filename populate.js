@@ -11,7 +11,7 @@ db.serialize(function () {
     if (process.argv[2].match(".*c.*")) { db.run('CREATE TABLE saves (id INT UNIQUE, content TEXT)'); }
 
     // prepare insert statement
-    var stmt = db.prepare('INSERT INTO saves (id, content) VALUES (?, ?)');
+    var stmt = db.prepare('INSERT OR REPLACE INTO saves (id, content) VALUES (?, ?)');
 
     // fill database with random data
     for (let i = 0; i < 10; i++) {
@@ -23,4 +23,4 @@ db.serialize(function () {
 })
 
 // close DB connection
-db.close()
+db.close();
