@@ -17,7 +17,7 @@ const server = http.createServer((req, res) => {
     // get the requested URL
     let url = req.url;
     // split the file up to get everything *before* the GET params
-    let path = url.split("?")[0];
+    let path = "/public-html" + url.split("?")[0];
     // check if it ends with /` and append index.html
     if (path.endsWith("/")) {
         path = path + "index.html";
@@ -25,8 +25,20 @@ const server = http.createServer((req, res) => {
     // check if file exists, if so, serve it, otherwise server something that needs to be processed server side
     if (fs.existsSync(__dirname + path)) {
         console.log("Sending", __dirname + path + "...");
-        // set header to html so browser interprets it as normal file
-        res.setHeader('Content-Type', 'text/html');
+        // set header to the right type so browser interprets it as proper file
+        res.setHeader('Content-Type', function() { 
+            let splitArr = (__dirname + path).split(".");
+            switch(splitArr[splitArr.length-1]) {
+                case "html":
+                    return 'text/html'
+                case "css":
+                    return 'text/css'
+                case "js":
+                    return 'text/js'
+                default:
+                    return 'text/plain'
+            }
+        }());
         // send content of file
         res.end(fs.readFileSync(__dirname + path));
     } else {
