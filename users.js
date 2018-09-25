@@ -1,4 +1,4 @@
-db = require("./database.js");
+db = require("./database.js").database;
 
 function register(request, callback) {
     let body = '';
@@ -25,25 +25,26 @@ function saveUser(data) {
     let username = data.username,
         password = data.password;
     if (!username || !password) {
-        callback('application/json', '{"error": "Username or password not provided"}')
+        callback('application/json', '{"error": "Username or password not provided"}');
         return;
     }
     // once again, set a timeout callback, we cancel that if everything's handled properly
     var timeout = setTimeout(function() {
-        callback('application/json', '{"error": "timeout"}')
+        callback('application/json', '{"error": "timeout"}');
     }, 1000)
     // start DB interaction
     db.serialize(function() {
         // use some SQL magic to insert a new value into the table, but if the ID already exist, replace the existing save slot
-        let stmt = db.prepare("INSERT OR REPLACE INTO users (name, password) VALUES (?, ?)");
+        let stmt = db.prepare("INSERT INTO users (username, password) VALUES (?, ?)");
         // execute prepared statement with our data
-        stmt.run(username, password);
-        // finish up query
-        stmt.finalize();
-        // cancel callback
-        clearTimeout(timeout);
-        // report back that there's no error in JSON
-        callback('application/json', '{"error": null}');
+        stmt.run(username, password, function (err) {
+            clearTimeout(timeout);
+            if (err) {
+                return callback('text/plain', err.message)
+            } else {
+                callback('application/json', '{"error": null}');
+            }
+        });
     });
 }
 
