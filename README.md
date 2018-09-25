@@ -4,6 +4,7 @@ Just a placeholder name until we think of a good name ;p
 # Dependecies
 ```
 sqlite3
+js-sha256
 ```
 # Instructions
 > This will update quite often, please keep that in mind
