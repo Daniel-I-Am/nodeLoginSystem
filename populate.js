@@ -15,7 +15,7 @@ db.serialize(function () {
     if (process.argv[2].match(".*c.*")) {
         db.run('CREATE TABLE saves (id INT UNIQUE, user TEXT, content TEXT)');
         db.run('CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, salt TEXT)');
-        db.run('CREATE TABLE tokens (username TEXT, token TEXT)');
+        db.run('CREATE TABLE tokens (username TEXT UNIQUE, token TEXT)');
     }
 
     // prepare insert statement
