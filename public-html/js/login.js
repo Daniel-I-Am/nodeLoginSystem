@@ -30,6 +30,16 @@ function sendLoginDetails(obj) {
     function postData(url = ``, data = {}) {
         return fetch(url, {
             method: "POST", // send as post data (so users can't accidently copy-paste their log in details and login details cannot be intercepted as easily (security))
+            /* 
+             * One small note on that, yeah no... when we're not using a secure protocol (https) it doesn't matter.
+             * It still helps make sure the general user doesn't copy paste their login details, but it doesn't help much in security.
+             * It's like sparing a cent on a million dollar loss. It's just not the thing you should be focussing on.
+             * 
+             * TODO: Let'sEncrypt this shit
+             * 
+             * When we're using HTTPS protocol, it should be a hell of a lot better. That fixes that million dollar loss.
+             * It still better to save the cent, extra security is always better. Just good practice to keep these things in mind though.
+             */
             mode: "cors",
             cache: "no-cache", // don't cache the returned data, every login we want to check whether the data is valid
             credentials: "same-origin",  // same origin blocks attackers from executing arbitrary code if a packet is intercepted
