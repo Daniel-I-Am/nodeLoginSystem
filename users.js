@@ -41,18 +41,7 @@ function login(request, callback) {
         body += chunk.toString(); // convert Buffer to string
     });
     request.on('end', () => {
-        let queryparams = body;
-        var params = queryparams.split('&');
-    
-        // put all GET params into an array
-        var pair = null,
-            data = [];
-    
-        params.forEach(function(d) {
-            pair = d.split('=');
-            data[pair[0]] = pair[1];
-        });
-
+        let data = JSON.parse(body);
         let username = data.username,
             plainTextPassword = data.password;
         loadUser(username, plainTextPassword)
