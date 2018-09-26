@@ -110,7 +110,7 @@ function loadUser(username, plainTextPassword) {
                             if (err) {
                                 return callback('text/plain', err.message);
                             } else {
-                                callback('application/json', '{"token": ' + token + '}');
+                                callback('application/json', '{"token": "' + token + '"}');
                             }
                         });
                     } else {
