@@ -9,11 +9,13 @@ db.serialize(function () {
     if (process.argv[2].match(".*d.*")) {
         db.run('DROP TABLE saves');
         db.run('DROP TABLE users');
+        db.run('DROP TABLE tokens');
     }
     // if we parse a `c` value, create new table
     if (process.argv[2].match(".*c.*")) {
         db.run('CREATE TABLE saves (id INT UNIQUE, user TEXT, content TEXT)');
         db.run('CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, salt TEXT)');
+        db.run('CREATE TABLE tokens (username TEXT, token TEXT)');
     }
 
     // prepare insert statement
