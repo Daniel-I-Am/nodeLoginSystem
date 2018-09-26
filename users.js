@@ -100,7 +100,19 @@ function loadUser(username, plainTextPassword) {
                 db.each("SELECT * FROM users WHERE username='" + username + "' AND password='" + sha256(salt + plainTextPassword) + "'", function(err, row) {
                     clearTimeout(timeout);
                     if (err == null) {
-                        callback('text/plain', 'Login successful')
+                        // use some SQL magic to insert a new value into the table, but if the ID already exist, replace the existing save slot
+                        let stmt = db.prepare("INSERT OR REPLACE INTO tokens (username, token) VALUES (?, ?)");
+                        // generate token
+                        let token = guid();
+                        // execute prepared statement with our data
+                        stmt.run(username, token, function (err) {
+                            clearTimeout(timeout);
+                            if (err) {
+                                return callback('text/plain', err.message);
+                            } else {
+                                callback('application/json', '{"token": ' + token + '}');
+                            }
+                        });
                     } else {
                         // if there's some kind of error, return the error as JSON
                         callback('application/json', '{"error": "Could not find user"}');
