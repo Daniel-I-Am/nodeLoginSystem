@@ -6,8 +6,8 @@ const fs = require("fs");
 const db = require("./database.js")
 const users = require("./users.js")
 // define on which hostname and port the server will run on
-const hostname = '127.0.0.1';
-const port = 8080;
+const hostname = process.argv[2] || '127.0.0.1';
+const port = process.argv[3] || 8080;
 
 // create HTTP server and listen on port 8080 for requests
 const server = http.createServer((req, res) => {
