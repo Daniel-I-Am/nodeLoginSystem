@@ -52,6 +52,8 @@ const server = http.createServer((req, res) => {
             users.register(req, callback);
         } else if (path.endsWith("login")) {
             users.login(req, callback);
+        } else if (path.endsWith("logout")) {
+            users.logout(req, callback);
         } else {
             res.statusCode = 404;
             res.setHeader('Content-Type', 'text/plain');
