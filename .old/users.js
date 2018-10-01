@@ -48,6 +48,44 @@ function login(request, callback) {
     });
 }
 
+function logout(request, callback) {
+    let body = '';
+    request.on('data', chunk => {
+        body += chunk.toString(); // convert Buffer to string
+    });
+    request.on('end', () => {
+        let data = JSON.parse(body);
+        let username = data.username,
+        plainTextPassword = data.password;
+        logoutUser(username)
+    });
+}
+
+function logoutUser(username) {
+    if (!username || !password) {
+        callback('application/json', '{"error": "Username or password not provided"}');
+        return;
+    }
+    // once again, set a timeout callback, we cancel that if everything's handled properly
+    var timeout = setTimeout(function() {
+        callback('application/json', '{"error": "timeout"}');
+    }, 1000)
+    // start DB interaction
+    db.serialize(function() {
+        // use some SQL magic to insert a new value into the table, but if the ID already exist, replace the existing save slot
+        let stmt = db.prepare("DELETE FROM tokens WHERE username='?'");
+        // execute prepared statement with our data
+        stmt.run(username, function (err) {
+            clearTimeout(timeout);
+            if (err) {
+                return callback('text/plain', err.message)
+            } else {
+                callback('application/json', '{"error": null}');
+            }
+        });
+    });
+}
+
 function saveUser(username, password, salt) {
     if (!username || !password) {
         callback('application/json', '{"error": "Username or password not provided"}');
@@ -115,4 +153,4 @@ function loadUser(username, plainTextPassword) {
     });
 }
 
-module.exports = {"register": register, "login": login}
+module.exports = {"register": register, "login": login, "logout": logout}
