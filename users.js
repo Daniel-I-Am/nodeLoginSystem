@@ -23,7 +23,7 @@ function register(request, callback) {
         var pair = null,
             data = [];
     
-        params.forEach(function(d) {
+        params.forEach(d=> {
             pair = d.split('=');
             data[pair[0]] = pair[1];
         });
