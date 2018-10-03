@@ -46,7 +46,7 @@ const server = http.createServer((req, res) => {
         // node API callback function
         callback = function(type, response) {res.setHeader('Content-Type', type); res.end(response);}
         // define methods based on path extensions
-        let methods = {"db": db.request, "register": users.register, "login": users.login}
+        let methods = {"db": db.request, "register": users.register, "login": users.login, "logout": users.logout}
         
         // loop through methods
         for (let e in methods) {
