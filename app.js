@@ -43,20 +43,22 @@ const server = http.createServer((req, res) => {
         // send content of file
         res.end(fs.readFileSync(__dirname + "/public-html" + path));
     } else {
-        // node API
+        // node API callback function
         callback = function(type, response) {res.setHeader('Content-Type', type); res.end(response);}
-        // if we request a DB call, process it there
-        if (path.endsWith("db")) {
-            db.request(req.url, callback);
-        } else if (path.endsWith("register")) {
-            users.register(req, callback);
-        } else if (path.endsWith("login")) {
-            users.login(req, callback);
-        } else {
-            res.statusCode = 404;
-            res.setHeader('Content-Type', 'text/plain');
-            res.end("Sorry, we could not process your request. Resource `" + path + "` not understood.");
+        // define methods based on path extensions
+        let methods = {"db": db.request, "register": users.register, "login": users.login}
+        
+        // loop through methods
+        for (let e in methods) {
+            // if it's a match, call method and respond
+            if (path.endsWith(e)) {
+                methods[e](req, callback)
+                return
+            }
         }
+        res.statusCode = 404;
+        res.setHeader('Content-Type', 'text/plain');
+        res.end("Sorry, we could not process your request. Resource `" + path + "` not understood.");
     }
 });
 
