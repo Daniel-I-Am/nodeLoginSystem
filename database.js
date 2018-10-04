@@ -15,30 +15,14 @@ async function insert(table, dataObject, callback, canReplace = true) {
         if (canReplace) {
             query = "INSERT OR REPLACE"
         }
-        /* TODO: remove
-        let stmt = db.prepare(`${query} INTO ${table} (${
+        console.log("executing: ", `${query} INTO ${table} (${
             function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key); return toRet.substring(2);}()}) VALUES (${
-                function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()})`);
-
-        console.log(`Executing "${query} INTO ${table} (${
+                function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()
+            })`)
+        db.run(`${query} INTO ${table} (${
             function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key); return toRet.substring(2);}()}) VALUES (${
-                function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()})"`)
-        try {
-            // execute prepared statement with our data
-            await stmt.run(...Object.values(dataObject));
-            // finish up query
-            await stmt.finalize();
-            // cancel callback
-            await clearTimeout(timeout);
-            // report back that there's no error in JSON
-            callback(null, null);
-        } catch(err) {
-            callback(null, err);
-        }
-        */
-       db.run(`${query} INTO ${table} (${
-        function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key); return toRet.substring(2);}()}) VALUES (${
-            function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()})`,
+                function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()
+            })`,
             Object.values(dataObject), function(data,err) {clearTimeout(timeout); callback(data,err)})
     });
 }
@@ -52,8 +36,11 @@ async function select(table, returnArray, dataObject, callback) {
     // start database interaction
     await db.serialize(function() {
         // find all records with the provided userID and return them as JSON
+        console.log("executing: ", `SELECT ${returnArray.toString()} FROM ${table} WHERE ${
+            function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += " AND " + key + "=?"); return toRet.substring(5);}()
+        }`)
         db.all(`SELECT ${returnArray.toString()} FROM ${table} WHERE ${
-            function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key + "=?"); return toRet.substring(2);}()
+            function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += " AND " + key + "=?"); return toRet.substring(5);}()
         }`,Object.values(dataObject),(err, rows) => {
             // process rows here 
             clearTimeout(timeout);
@@ -75,6 +62,7 @@ async function execute(sql, params, callback) {
     }, 1000)
     // start database interaction
     await db.serialize(function() {
+        console.log("executing: ", sql)
         // find all records with the provided userID and return them as JSON
         db.all(sql,params,(err, rows) => {
             // process rows here 
