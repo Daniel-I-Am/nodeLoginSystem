@@ -6,8 +6,9 @@ var db = new sqlite3.Database('./database.sqlite3');
 // define an async function (you'll see this a lot more)
 // async just means execution of this function doesn't delay program flow like a normal function would
 // thus you can use stuff like sleep (or in our case timeouts)
-async function request(url, callback) {
+async function request(req, callback) {
     // log the fact that someone asked for a page
+    let url = req.url;
     console.log("User requested", url);
 
     // split up all GET parameters (the stuff behind a '?' in a link)
