@@ -19,7 +19,7 @@ async function register(request, callback) {
             var post = JSON.parse(body)
             // use post['blah'], etc.
             let plainTextPassword = post.password,
-                salt = Math.random().toString(36).substring(7);;
+                salt = Math.random().toString(36).substring(7);
             let password = sha256.sha256(salt+plainTextPassword);
             await registerDB(post.username, password, salt, callback)
         } catch(err) {
