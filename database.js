@@ -9,12 +9,13 @@ async function insert(table, dataObject, callback, canReplace = true) {
         callback(null, "timeout");
     }, 1000)
     // start DB interaction
-    await db.serialize(function() {
+    await db.serialize(async function() {
         // use some SQL magic to insert a new value into the table, but if the ID already exist, replace the existing save slot
         let query = "INSERT"
         if (canReplace) {
             query = "INSERT OR REPLACE"
         }
+        /* TODO: remove
         let stmt = db.prepare(`${query} INTO ${table} (${
             function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key); return toRet.substring(2);}()}) VALUES (${
                 function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()})`);
@@ -22,14 +23,23 @@ async function insert(table, dataObject, callback, canReplace = true) {
         console.log(`Executing "${query} INTO ${table} (${
             function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key); return toRet.substring(2);}()}) VALUES (${
                 function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()})"`)
-        // execute prepared statement with our data
-        stmt.run(...Object.values(dataObject));
-        // finish up query
-        stmt.finalize();
-        // cancel callback
-        clearTimeout(timeout);
-        // report back that there's no error in JSON
-        callback(null, null);
+        try {
+            // execute prepared statement with our data
+            await stmt.run(...Object.values(dataObject));
+            // finish up query
+            await stmt.finalize();
+            // cancel callback
+            await clearTimeout(timeout);
+            // report back that there's no error in JSON
+            callback(null, null);
+        } catch(err) {
+            callback(null, err);
+        }
+        */
+       db.run(`${query} INTO ${table} (${
+        function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key); return toRet.substring(2);}()}) VALUES (${
+            function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()})`,
+            Object.values(dataObject), function(data,err) {clearTimeout(timeout); callback(data,err)})
     });
 }
 
