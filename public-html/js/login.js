@@ -1,5 +1,5 @@
 // overwrite default redirect of form submit and instead call sendLoginDetails
-$('#registerForm').submit(async e => {
+$('#loginForm').submit(async e => {
     e.preventDefault();
     await fetchFrom('/login', 
         {"username": e.target.username.value, "password": e.target.password.value}, 
