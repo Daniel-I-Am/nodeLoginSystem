@@ -40,6 +40,8 @@ const server = http.createServer((req, res) => {
                     return 'text/js'
                 case "json":
                     return 'application/json'
+                case "ico":
+                    return 'image/xicon'
                 default:
                     return 'text/plain'
             }
