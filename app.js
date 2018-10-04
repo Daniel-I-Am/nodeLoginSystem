@@ -78,5 +78,6 @@ process.on('SIGINT', function() {
     // o/
     console.log("Goodbye");
     // quit
+    // only a little bit redundant
     process.exit();
 });
