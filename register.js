@@ -18,15 +18,17 @@ async function register(request, callback) {
         try {
             var post = JSON.parse(body)
             // use post['blah'], etc.
-            await registerDB(post.username, post.password, callback)
+            let plainTextPassword = post.password,
+                salt = Math.random().toString(36).substring(7);;
+            let password = sha256.sha256(salt+plainTextPassword);
+            await registerDB(post.username, password, salt, callback)
         } catch(err) {
             callback('application/json', JSON.stringify({"error": err.message}))
         }
     });
 }
 
-async function registerDB(username, password, callback) {
-    let salt = "asd"
+async function registerDB(username, password, salt, callback) {
     try {
         db.insert("users", {"username": username, "password": password, "salt": salt}, 
             function(data,err) {callback('application/json', JSON.stringify(err ? {"error": err.message} : {"data": data}))}, false);
