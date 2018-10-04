@@ -50,7 +50,7 @@ const server = http.createServer((req, res) => {
         // node API callback function
         callback = function(type, response) {res.setHeader('Content-Type', type); res.end(response);}
         // define methods based on path extensions
-        let methods = {"register": register.register}
+        let methods = {"register": register.register, "login": login.login}
         
         // loop through methods
         for (let e in methods) {
