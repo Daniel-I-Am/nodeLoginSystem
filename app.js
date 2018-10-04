@@ -23,11 +23,11 @@ const server = http.createServer((req, res) => {
         path = path + "index.html";
     }
     // check if file exists, if so, serve it, otherwise server something that needs to be processed server side
-    if (fs.existsSync(__dirname + "/.old/public-html" + path)) {
-        console.log("Sending", __dirname + "/.old/public-html" + path + "...");
+    if (fs.existsSync(__dirname + "/public-html" + path)) {
+        console.log("Sending", __dirname + "/public-html" + path + "...");
         // set header to the right type so browser interprets it as proper file
         res.setHeader('Content-Type', function() { 
-            let splitArr = (__dirname + "/.old/public-html" + path).split(".");
+            let splitArr = (__dirname + "/public-html" + path).split(".");
             switch(splitArr[splitArr.length-1]) {
                 case "html":
                     return 'text/html'
@@ -40,7 +40,7 @@ const server = http.createServer((req, res) => {
             }
         }());
         // send content of file
-        res.end(fs.readFileSync(__dirname + "/.old/public-html" + path));
+        res.end(fs.readFileSync(__dirname + "/public-html" + path));
     } else {
         // node API callback function
         callback = function(type, response) {res.setHeader('Content-Type', type); res.end(response);}
