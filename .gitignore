@@ -75,3 +75,4 @@ typings/
 # personal changes
 .sqlite3
 package-lock.json
+.old/
