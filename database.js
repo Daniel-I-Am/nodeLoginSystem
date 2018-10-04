@@ -3,7 +3,7 @@ const sqlite3 = require('sqlite3').verbose();
 // point to the database
 var db = new sqlite3.Database('./database.sqlite3');
 
-async function insert(table, dataObject, callback) {
+async function insert(table, dataObject, callback, canReplace = true) {
     // set a timeout return, we cancel that if everything's handled properly
     var timeout = setTimeout(function() {
         callback(null, "timeout");
@@ -11,10 +11,17 @@ async function insert(table, dataObject, callback) {
     // start DB interaction
     await db.serialize(function() {
         // use some SQL magic to insert a new value into the table, but if the ID already exist, replace the existing save slot
-        let stmt = db.prepare(`INSERT OR REPLACE INTO ${table} (${
+        let query = "INSERT"
+        if (canReplace) {
+            query = "INSERT OR REPLACE"
+        }
+        let stmt = db.prepare(`${query} INTO ${table} (${
             function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key); return toRet.substring(2);}()}) VALUES (${
                 function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()})`);
 
+        console.log(`Executing "${query} INTO ${table} (${
+            function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key); return toRet.substring(2);}()}) VALUES (${
+                function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()})"`)
         // execute prepared statement with our data
         stmt.run(...Object.values(dataObject));
         // finish up query
