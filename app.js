@@ -35,6 +35,8 @@ const server = http.createServer((req, res) => {
                     return 'text/css'
                 case "js":
                     return 'text/js'
+                case "json":
+                    return 'text/json'
                 default:
                     return 'text/plain'
             }
@@ -78,5 +80,6 @@ process.on('SIGINT', function() {
     // o/
     console.log("Goodbye");
     // quit
+    // only a little bit redundant
     process.exit();
 });
