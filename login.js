@@ -1,18 +1,9 @@
 // import local libs
 const db = require("./database.js");
+const general = require("./general.js");
 
 // import node modules
 const sha256 = require("js-sha256");
-
-// function to generate UUID
-function guid() {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-}
 
 async function login(request, callback) {
     let body = '';
@@ -56,7 +47,7 @@ async function login(request, callback) {
                             delete data[0].password;
                             delete data[0].salt;
                             // generate a login token and append it onto the data[0] object
-                            data[0].token = guid();
+                            data[0].token = general.guid();
                             // insert the new token and userID into the tokens table
                             db.insert("tokens", {"userID": data[0].rowid, "token": data[0].token}, function(_, err) {
                                 if (err) {
@@ -80,4 +71,4 @@ async function login(request, callback) {
 }
 
 // exports
-module.exports = {"guid": guid, "login": login}
+module.exports = {"login": login}
