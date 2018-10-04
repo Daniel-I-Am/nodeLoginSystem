@@ -25,7 +25,7 @@ const server = http.createServer((req, res) => {
         path = path + "index.html";
     }
     let d = new Date();
-    console.log(`[${d.toTimeString()}] ${res.socket.remoteAddres}:${res.socket.remotePort} - ${path}`);
+    console.log(`[${d.toTimeString()}] ${res.socket.remoteAddress}:${res.socket.remotePort} - ${path}`);
     // check if file exists, if so, serve it, otherwise server something that needs to be processed server side
     if (fs.existsSync(__dirname + "/public-html" + path)) {
         // set header to the right type so browser interprets it as proper file
