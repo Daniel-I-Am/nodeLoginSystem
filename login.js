@@ -82,12 +82,18 @@ function logout(request, callback) {
     request.on('end', async function () {
         try {
             var post = JSON.parse(body);
-            db.delete("tokens", {"username": post.username, "token": post.token}, async function(data, err) {
+            db.select("users", ["rowid"], {"username": post.username}, async function(data, err) {
+                if (err) {
+                    callback('application/json', JSON.stringify({"error": err}));
+                } else {
+                    db.delete("tokens", {"userID": data[0].rowid, "token": post.token}, async function(data, err) {
                 if (err) {
                     callback('application/json', JSON.stringify({"error": err}));
                 } else {
                     callback('application/json', JSON.stringify({"error": null}));
-                }
+                        };
+                    });
+                };
             });
         } catch(err) {
             callback('application/json', JSON.stringify({"error": err.message}));
