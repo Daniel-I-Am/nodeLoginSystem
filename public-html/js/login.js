@@ -9,8 +9,12 @@ $('#loginForm').submit(async e => {
                 return;
             }
             console.log(data);
-            setCookie("username", data.username, null);
-            setCookie("token", data.token, null);
+            let cookieDays = null;
+            if (e.target.remember.checked) {
+                cookieDays = 30;
+            }
+            setCookie("username", data.username, cookieDays);
+            setCookie("token", data.token, cookieDays);
             window.location.replace("/");
         }, 
         function(err) {console.error(err);}
