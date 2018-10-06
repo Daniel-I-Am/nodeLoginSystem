@@ -32,7 +32,7 @@ async function login(request, callback) {
                 // hash and salt the password with the selected salt
                 let password = sha256.sha256(salt+plainTextPassword);
                 // select every detail about the user if the username AND hashed/salted password match
-                db.select("users", ["*"], {"username": post.username, "password": password}, async function(data, err) {
+                db.select("users", ["rowid", "*"], {"username": post.username, "password": password}, async function(data, err) {
                     // incorrect password
                     if (data.length == 0) {
                         callback('application/json', JSON.stringify({"error": "Username or password incorrect"}))
