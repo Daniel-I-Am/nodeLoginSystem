@@ -1,0 +1,16 @@
+*, *::after, *::before {
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+
+}
+
+nav {
+    display: grid;
+    grid-template: auto / minmax(300px, 40%) repeat(4, auto);
+}
+
+nav h1 {
+}
