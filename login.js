@@ -72,17 +72,23 @@ async function login(request, callback) {
 
 function checkLogin(username, token, callback) {
     try {
+        // select the userID from the users table
         db.select("users", ["rowid"], {"username": username}, async function(data, err) {
             if (err) {
+                // report errors
                 callback(null, err);
             } else {
+                // select the token with the userid from before
                 db.select("tokens", ["*"], {"userID": data[0].rowid, "token": token}, async function(data, err) {
                     if (err) {
+                        // report errors
                         callback(null, err);
                     } else {
+                        // if there's no users by that id and token, we are not logged in properly, return false
                         if (data.length == 0) {
                             callback(false, null);
                         } else {
+                            // we are logged in, users userid and token are in the tokens table, return true
                             callback(true, null);
                         }
                     }
@@ -94,6 +100,7 @@ function checkLogin(username, token, callback) {
     }
 }
 
+// logout just deletes the token from tokens table
 function logout(request, callback) {
     let body = '';
     request.on('data', function (data) {
@@ -105,15 +112,21 @@ function logout(request, callback) {
     });
     request.on('end', async function () {
         try {
+            // parse post data
             var post = JSON.parse(body);
+            // select userID from users table
             db.select("users", ["rowid"], {"username": post.username}, async function(data, err) {
                 if (err) {
+                    // report errors
                     callback('application/json', JSON.stringify({"error": err}));
                 } else {
+                    // delete our token from the tokens table, if we supply the wrong token, nothing will be removed from the database
                     db.delete("tokens", {"userID": data[0].rowid, "token": post.token}, async function(data, err) {
                         if (err) {
+                            // report errors
                             callback('application/json', JSON.stringify({"error": err}));
                         } else {
+                            // report no errors
                             callback('application/json', JSON.stringify({"error": null}));
                         };
                     });
