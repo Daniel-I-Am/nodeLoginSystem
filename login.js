@@ -70,6 +70,30 @@ async function login(request, callback) {
     });
 }
 
+function checkLogin(username, token, callback) {
+    try {
+        db.select("users", ["rowid"], {"username": username}, async function(data, err) {
+            if (err) {
+                callback(null, err);
+            } else {
+                db.select("tokens", ["*"], {"userID": data[0].rowid, "token": token}, async function(data, err) {
+                    if (err) {
+                        callback(null, err);
+                    } else {
+                        if (data.length == 0) {
+                            callback(false, null);
+                        } else {
+                            callback(true, null);
+                        }
+                    }
+                });
+            }
+        });
+    } catch(err) {
+        callback(null, err.message);
+    }
+}
+
 function logout(request, callback) {
     let body = '';
     request.on('data', function (data) {
@@ -87,10 +111,10 @@ function logout(request, callback) {
                     callback('application/json', JSON.stringify({"error": err}));
                 } else {
                     db.delete("tokens", {"userID": data[0].rowid, "token": post.token}, async function(data, err) {
-                if (err) {
-                    callback('application/json', JSON.stringify({"error": err}));
-                } else {
-                    callback('application/json', JSON.stringify({"error": null}));
+                        if (err) {
+                            callback('application/json', JSON.stringify({"error": err}));
+                        } else {
+                            callback('application/json', JSON.stringify({"error": null}));
                         };
                     });
                 };
@@ -102,4 +126,4 @@ function logout(request, callback) {
 }
 
 // exports
-module.exports = {"login": login, "logout": logout}
+module.exports = {"login": login, "logout": logout, "checkLogin": checkLogin}
