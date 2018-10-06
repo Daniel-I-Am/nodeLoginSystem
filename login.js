@@ -70,5 +70,30 @@ async function login(request, callback) {
     });
 }
 
+function logout(request, callback) {
+    let body = '';
+    request.on('data', function (data) {
+        body += data;
+        // too much POST data, kill the connection!
+        // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
+        if (body.length > 1e6)
+            request.connection.destroy();
+    });
+    request.on('end', async function () {
+        try {
+            var post = JSON.parse(body);
+            db.delete("tokens", {"username": post.username, "token": post.token}, async function(data, err) {
+                if (err) {
+                    callback('application/json', JSON.stringify({"error": err}));
+                } else {
+                    callback('application/json', JSON.stringify({"error": null}));
+                }
+            });
+        } catch(err) {
+            callback('application/json', JSON.stringify({"error": err.message}));
+        }
+    });
+}
+
 // exports
-module.exports = {"login": login}
+module.exports = {"login": login, "logout": logout}
