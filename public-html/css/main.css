@@ -4,13 +4,36 @@
 }
 
 :root {
+    --nav-bar-color: #3ba0ff;
+}
 
+a, a:visited {
+    text-decoration: none;
 }
 
 nav {
     display: grid;
-    grid-template: auto / minmax(300px, 40%) repeat(4, auto);
+    grid-template: auto / minmax(200px, 40%) repeat(5, auto);
+    padding: 1em;
+    background-color: var(--nav-bar-color);
+    color: white;
 }
 
 nav h1 {
+    padding-left: 2em;
+}
+
+nav *:not(h1) {
+    border: .2em solid white;
+    border-radius: .5em;
+    padding: .2em 2em;
+    margin: auto;
+    color: white;
+    transition: all 150ms ease-in-out;
+}
+
+nav *:not(h1):hover {
+    border-color: black;
+    color: black;
+    background-color: white;
 }
