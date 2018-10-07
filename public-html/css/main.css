@@ -37,3 +37,16 @@ nav *:not(h1):hover {
     color: black;
     background-color: white;
 }
+
+@media screen and (max-width: 940px) {
+    /*Tablet*/
+    nav {
+        grid-template: auto auto / repeat(5, auto);
+    }
+    
+    nav h1 {
+        grid-area: 1 / 1 / 1 / -1;
+        padding: auto;
+        margin: auto;
+    }
+}
