@@ -24,10 +24,10 @@ const server = http.createServer((req, res) => {
     if (path.endsWith("/")) {
         path = path + "index.html";
     }
-    let d = new Date();
-    console.log(`[${d.toTimeString()}] ${res.socket.remoteAddress}:${res.socket.remotePort} - ${path}`);
     // check if file exists, if so, serve it, otherwise server something that needs to be processed server side
     if (fs.existsSync(__dirname + "/public-html" + path)) {
+        // log connection details on server side
+        log(req, res);
         // set header to the right type so browser interprets it as proper file
         res.setHeader('Content-Type', function() { 
             let splitArr = (__dirname + "/public-html" + path).split(".");
@@ -58,11 +58,15 @@ const server = http.createServer((req, res) => {
         for (let e in methods) {
             // if it's a match, call method and respond
             if (path.endsWith(e)) {
+                // log connection details on server side
+                log(req, res);
                 methods[e](req, callback)
                 return
             }
         }
         res.statusCode = 404;
+        // log connection details on server side
+        log(req, res);
         res.setHeader('Content-Type', 'text/plain');
         res.end("Sorry, we could not process your request. Resource `" + path + "` not understood.");
     }
@@ -88,3 +92,27 @@ process.on('SIGINT', function() {
     // only a little bit redundant
     process.exit();
 });
+
+function log(req, res) {
+    let d = new Date();
+    let color = function() { // define a new anonymous function
+        switch (res.statusCode) { // which switches the status code
+            case 200: // and based on the statusCode returns a certain color code
+            case 201:
+            case 202:
+                return "\x1b[32m"; // green = OK
+            case 403:
+            case 401:
+            case 405:
+                return "\x1b[31m" // red = Forbidden/Unauthorized/Method Not Allowed
+            case 400:
+            case 404:
+                return "\x1b[33m" // yellow = Not Found/Bad Request
+            case 500:
+                return "\x1b[41m\x1b[37m" // white on red = Internal Server Error
+            default: // returns reset by default
+                return "\x1b[0m"
+        }
+    }(); // and gets called, to return the color value, not the function
+    console.log(`[${d.toTimeString()}] ${color}${res.socket.remoteAddress}:${res.socket.remotePort} [${res.statusCode}]: ${req.url}\x1b[0m`);
+}
