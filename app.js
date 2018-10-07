@@ -114,5 +114,5 @@ function log(req, res) {
                 return "\x1b[0m"
         }
     }(); // and gets called, to return the color value, not the function
-    console.log(`[${d.toTimeString()}] ${color}${res.socket.remoteAddress}:${res.socket.remotePort} [${res.statusCode}]: ${req.url}\x1b[0m`);
+    console.log(`[${d.toTimeString()}] ${color}${res.socket.remoteAddress}:${res.socket.remotePort} [${res.statusCode}]: ${req.url}\x1b[0m`); //log: [time] ip:port [status]: path
 }
