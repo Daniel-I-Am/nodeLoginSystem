@@ -23,9 +23,14 @@ async function login(request, callback) {
             let plainTextPassword = post.password;
             // select the salt that should be stored in the DB
             db.select("users", ["salt"], {"username": post.username}, async function(data, err) {
+                if (err) {
+                    callback('application/json', JSON.stringify({"error": err}));
+                    return;
+                }
                 // Incorrect username
-                if (data.length == 0) {
-                    callback('application/json', JSON.stringify({"error": "Username or password incorrect"}))
+                if (data.length <= 0) {
+                    callback('application/json', JSON.stringify({"error": "Username or password incorrect"}));
+                    return;
                 }
                 // get the salt that was selected
                 salt = data[0].salt
