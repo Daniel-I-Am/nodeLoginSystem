@@ -16,7 +16,7 @@ async function login(request, callback) {
     });
     request.on('end', async function () {
         try {
-            var post = JSON.parse(body)
+            var post = JSON.parse(body);
             // use post['blah'], etc.
 
             // get the plain text password sent over the wire
@@ -62,10 +62,10 @@ async function login(request, callback) {
                             db.insert("tokens", {"userID": data[0].rowid, "token": data[0].token}, function(_, err) {
                                 if (err) {
                                     // return if there were any errors
-                                    callback(500, 'application/json', JSON.stringify({"error": err.message}))
+                                    callback(500, 'application/json', JSON.stringify({"error": err.message}));
                                 } else {
                                     // return the data, login successful
-                                    callback(200, 'application/json', JSON.stringify(data[0]))
+                                    callback(200, 'application/json', JSON.stringify(data[0]));
                                 }
                             // true === canOverwrite (in DB.insert)
                             }, true); // \db.insert
@@ -75,7 +75,7 @@ async function login(request, callback) {
             }); // \db.select
         } catch(err) {
             // if the original salt selection or anything else going on in the function failed somehow, return the error
-            callback(500, 'application/json', JSON.stringify({"error": err.message}))
+            callback(500, 'application/json', JSON.stringify({"error": err.message}));
         }
     });
 }
