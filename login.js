@@ -33,13 +33,13 @@ async function login(request, callback) {
                     return;
                 }
                 // get the salt that was selected
-                salt = data[0].salt
+                salt = data[0].salt;
                 // hash and salt the password with the selected salt
                 let password = sha256.sha256(salt+plainTextPassword);
                 // select every detail about the user if the username AND hashed/salted password match
                 db.select("users", ["rowid", "*"], {"username": post.username, "password": password}, async function(data, err) {
                     if (err) {
-                        callback('application/json', JSON.stringify({"error": err}))
+                        callback('application/json', JSON.stringify({"error": err}));
                         return;
                     }
                     // incorrect password
@@ -50,7 +50,7 @@ async function login(request, callback) {
                     } else {
                         // if there's an error in the query, return it
                         if (err) {
-                            callback('application/json', JSON.stringify({"error": err.message}))
+                            callback('application/json', JSON.stringify({"error": err.message}));
                         // no error, all was fine
                         } else {
                             // delete the password and salt from the data[0] object, the client side does not need to know those
@@ -153,4 +153,4 @@ function logout(request, callback) {
 }
 
 // exports
-module.exports = {"login": login, "logout": logout, "checkLogin": checkLogin}
+module.exports = {"login": login, "logout": logout, "checkLogin": checkLogin};

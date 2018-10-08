@@ -5,7 +5,7 @@ const fs = require("fs");
 // import our own methods
 const db = require("./database.js");
 const login = require("./login.js");
-const register = require("./register.js")
+const register = require("./register.js");
 // define on which hostname and port the server will run on
 const hostname = process.argv[2] || '127.0.0.1';
 const port = process.argv[3] || 8080;
@@ -33,17 +33,17 @@ const server = http.createServer((req, res) => {
             let splitArr = (__dirname + "/public-html" + path).split(".");
             switch(splitArr[splitArr.length-1]) {
                 case "html":
-                    return 'text/html'
+                    return 'text/html';
                 case "css":
-                    return 'text/css'
+                    return 'text/css';
                 case "js":
-                    return 'text/js'
+                    return 'text/js';
                 case "json":
-                    return 'application/json'
+                    return 'application/json';
                 case "ico":
-                    return 'image/ico'
+                    return 'image/ico';
                 default:
-                    return 'text/plain'
+                    return 'text/plain';
             }
         }());
         // send content of file
@@ -60,8 +60,8 @@ const server = http.createServer((req, res) => {
             if (path.endsWith(e)) {
                 // log connection details on server side
                 log(req, res);
-                methods[e](req, callback)
-                return
+                methods[e](req, callback);
+                return;
             }
         }
         res.statusCode = 404;
@@ -80,7 +80,7 @@ server.listen(port, hostname, () => {
 // if we call a `SIGINT` (ctrl-c) event on the server, we catch that signal and handle it ourselves
 process.on('SIGINT', function() {
     console.log("\nCaught interrupt signal");
-    console.log("Closing server...")
+    console.log("Closing server...");
     // close the server safely
     server.close();
     console.log("Closing database connection...");
@@ -104,14 +104,14 @@ function log(req, res) {
             case 403:
             case 401:
             case 405:
-                return "\x1b[31m" // red = Forbidden/Unauthorized/Method Not Allowed
+                return "\x1b[31m"; // red = Forbidden/Unauthorized/Method Not Allowed
             case 400:
             case 404:
-                return "\x1b[33m" // yellow = Not Found/Bad Request
+                return "\x1b[33m"; // yellow = Not Found/Bad Request
             case 500:
-                return "\x1b[41m\x1b[37m" // white on red = Internal Server Error
+                return "\x1b[41m\x1b[37m"; // white on red = Internal Server Error
             default: // returns reset by default
-                return "\x1b[0m"
+                return "\x1b[0m";
         }
     }(); // and gets called, to return the color value, not the function
     console.log(`[${d.toTimeString()}] ${color}${res.socket.remoteAddress}:${res.socket.remotePort} [${res.statusCode}]: ${req.url}\x1b[0m`); //log: [time] ip:port [status]: path

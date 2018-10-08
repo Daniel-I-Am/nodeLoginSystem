@@ -11,14 +11,14 @@ async function insert(table, dataObject, callback, canReplace = true) {
     // start DB interaction
     await db.serialize(async function() {
         // use some SQL magic to insert a new value into the table, but if the ID already exist, replace the existing save slot
-        let query = "INSERT"
+        let query = "INSERT";
         if (canReplace) {
-            query = "INSERT OR REPLACE"
+            query = "INSERT OR REPLACE";
         }
         console.log("executing: ", `${query} INTO ${table} (${
             function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key); return toRet.substring(2);}()}) VALUES (${
                 function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()
-            })`)
+            })`);
         db.run(`${query} INTO ${table} (${
             function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key); return toRet.substring(2);}()}) VALUES (${
                 function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()
@@ -32,7 +32,7 @@ async function select(table, returnArray, dataObject, callback) {
     var timeout = setTimeout(function() {
         // return a json with error message
         callback(null, "timeout");
-    }, 1000)
+    }, 1000);
     // start database interaction
     await db.serialize(function() {
         // find all records with the provided userID and return them as JSON
@@ -59,13 +59,13 @@ async function remove(table, dataObject, callback) {
     var timeout = setTimeout(function() {
         // return a json with error message
         callback(null, "timeout");
-    }, 1000)
+    }, 1000);
     // start database interaction
     await db.serialize(function() {
         // find all records with the provided userID and return them as JSON
         console.log("executing: ", `DELETE FROM ${table} WHERE ${
             function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += " AND " + key + "=?"); return toRet.substring(5);}()
-        }`)
+        }`);
         db.all(`DELETE FROM ${table} WHERE ${
             function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += " AND " + key + "=?"); return toRet.substring(5);}()
         }`,Object.values(dataObject),(err, _) => {
