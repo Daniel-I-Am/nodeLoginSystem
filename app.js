@@ -4,6 +4,8 @@ const http = require("http");
 const fs = require("fs");
 // import our own methods
 const db = require("./database.js");
+const login = require("./login.js");
+const register = require("./register.js")
 // define on which hostname and port the server will run on
 const hostname = process.argv[2] || '127.0.0.1';
 const port = process.argv[3] || 8080;
@@ -22,9 +24,10 @@ const server = http.createServer((req, res) => {
     if (path.endsWith("/")) {
         path = path + "index.html";
     }
+    let d = new Date();
+    console.log(`[${d.toTimeString()}] ${res.socket.remoteAddress}:${res.socket.remotePort} - ${path}`);
     // check if file exists, if so, serve it, otherwise server something that needs to be processed server side
     if (fs.existsSync(__dirname + "/public-html" + path)) {
-        console.log("Sending", __dirname + "/public-html" + path + "...");
         // set header to the right type so browser interprets it as proper file
         res.setHeader('Content-Type', function() { 
             let splitArr = (__dirname + "/public-html" + path).split(".");
@@ -36,7 +39,9 @@ const server = http.createServer((req, res) => {
                 case "js":
                     return 'text/js'
                 case "json":
-                    return 'text/json'
+                    return 'application/json'
+                case "ico":
+                    return 'image/ico'
                 default:
                     return 'text/plain'
             }
@@ -47,7 +52,7 @@ const server = http.createServer((req, res) => {
         // node API callback function
         callback = function(type, response) {res.setHeader('Content-Type', type); res.end(response);}
         // define methods based on path extensions
-        let methods = {}
+        let methods = {"register": register.register, "login": login.login, "logout": login.logout}
         
         // loop through methods
         for (let e in methods) {
