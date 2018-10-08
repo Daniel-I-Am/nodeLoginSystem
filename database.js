@@ -47,8 +47,8 @@ async function select(table, returnArray, dataObject, callback) {
             if (err == null) {
                 callback(rows, null);
             } else {
-                // if there's some kind of error, return the error as JSON
-                callback(null, err.message);
+                // if there's some kind of error, return the error
+                callback(null, err);
             }
         });
     });
@@ -74,8 +74,8 @@ async function remove(table, dataObject, callback) {
             if (err == null) {
                 callback(null, null);
             } else {
-                // if there's some kind of error, return the error as JSON
-                callback(null, err.message);
+                // if there's some kind of error, return the error
+                callback(null, err);
             }
         });
     });
@@ -97,8 +97,8 @@ async function execute(sql, params, callback) {
             if (err == null) {
                 callback(rows, null);
             } else {
-                // if there's some kind of error, return the error as JSON
-                callback(null, err.message);
+                // if there's some kind of error, return the error
+                callback(null, err);
             }
         });
     });
