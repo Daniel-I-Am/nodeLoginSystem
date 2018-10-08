@@ -59,8 +59,10 @@ const server = http.createServer((req, res) => {
             // if it's a match, call method and respond
             if (path.endsWith(e)) {
                 // log connection details on server side
-                log(req, res);
-                methods[e](req, callback);
+                async function callFunc()     {methods[e](req, callback)}
+                callFunc()
+                    .then(function(_) {log(req, res)})
+                    .catch(function(_) {res.statusCode = 500; log(req, res)});
                 return;
             }
         }
