@@ -1,3 +1,4 @@
+const CMDLineArgs = parseCMDLine();
 // load HTTP module
 const http = require("http");
 // import fs and module
@@ -7,8 +8,8 @@ const db = require("./database.js");
 const login = require("./login.js");
 const register = require("./register.js");
 // define on which hostname and port the server will run on
-const hostname = process.argv[2] || '127.0.0.1';
-const port = process.argv[3] || 8080;
+const hostname = CMDLineArgs.options.hostname || '127.0.0.1';
+const port = CMDLineArgs.options.port || 8080;
 
 // create HTTP server and listen on port 8080 for requests
 const server = http.createServer((req, res) => {
@@ -99,6 +100,25 @@ process.on('SIGINT', function() {
     // only a little bit redundant
     process.exit();
 });
+
+function parseCMDLine() {
+    flags = []
+    args = []
+    options = {}
+    process.argv.forEach((e, i) => {
+        if (i < 2) return;
+        if (e.startsWith("-") && !e.startsWith("--")) {
+            flags = flags.concat(e.substring(1).split(""));
+            return;
+        }
+        if (e.startsWith("--") && e.includes("=")) {
+            options[e.substring(2).split("=")[0]] = e.substring(2).split("=")[1];
+            return;
+        }
+        args = args.concat(e);
+    });
+    return {"flags": flags, "args": args, "options": options}
+}
 
 function log(req, res) {
     let d = new Date();
