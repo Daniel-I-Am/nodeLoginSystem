@@ -23,9 +23,14 @@ async function login(request, callback) {
             let plainTextPassword = post.password;
             // select the salt that should be stored in the DB
             db.select("users", ["salt"], {"username": post.username}, async function(data, err) {
+                if (err) {
+                    callback('application/json', JSON.stringify({"error": err}));
+                    return;
+                }
                 // Incorrect username
-                if (data.length == 0) {
-                    callback('application/json', JSON.stringify({"error": "Username or password incorrect"}))
+                if (data.length <= 0) {
+                    callback('application/json', JSON.stringify({"error": "Username or password incorrect"}));
+                    return;
                 }
                 // get the salt that was selected
                 salt = data[0].salt
@@ -33,9 +38,14 @@ async function login(request, callback) {
                 let password = sha256.sha256(salt+plainTextPassword);
                 // select every detail about the user if the username AND hashed/salted password match
                 db.select("users", ["rowid", "*"], {"username": post.username, "password": password}, async function(data, err) {
+                    if (err) {
+                        callback('application/json', JSON.stringify({"error": err}))
+                        return;
+                    }
                     // incorrect password
                     if (data.length == 0) {
-                        callback('application/json', JSON.stringify({"error": "Username or password incorrect"}))
+                        callback('application/json', JSON.stringify({"error": "Username or password incorrect"}));
+                        return;
                     // login details are correct
                     } else {
                         // if there's an error in the query, return it
@@ -120,6 +130,10 @@ function logout(request, callback) {
                     // report errors
                     callback('application/json', JSON.stringify({"error": err}));
                 } else {
+                    if (data.length <= 0) {
+                        callback('application/json', JSON.stringify({"error": "Not logged in"}));
+                        return;
+                    }
                     // delete our token from the tokens table, if we supply the wrong token, nothing will be removed from the database
                     db.delete("tokens", {"userID": data[0].rowid, "token": post.token}, async function(data, err) {
                         if (err) {
