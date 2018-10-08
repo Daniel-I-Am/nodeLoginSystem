@@ -39,9 +39,9 @@ async function registerDB(username, password, salt, callback) {
         db.insert("users", {"username": username, "password": password, "salt": salt}, 
             function(data,err) {
                 if (err) {
-                    callback(500, 'application/json', JSON.stringify({"error": err.message}))
+                    callback(500, 'application/json', JSON.stringify({"error": err.message}));
                 } else {
-                    callback(500, 'application/json', JSON.stringify({"data": data}))
+                    callback(500, 'application/json', JSON.stringify({"data": data}));
                 }
             }, false);
     } catch(err) {

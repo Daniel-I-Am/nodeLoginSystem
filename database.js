@@ -7,7 +7,7 @@ async function insert(table, dataObject, callback, canReplace = true) {
     // set a timeout return, we cancel that if everything's handled properly
     var timeout = setTimeout(function() {
         callback(null, "timeout");
-    }, 1000)
+    }, 1000);
     // start DB interaction
     await db.serialize(async function() {
         // use some SQL magic to insert a new value into the table, but if the ID already exist, replace the existing save slot
@@ -23,7 +23,7 @@ async function insert(table, dataObject, callback, canReplace = true) {
             function() {let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", " + key); return toRet.substring(2);}()}) VALUES (${
                 function() { let toRet = ""; Object.keys(dataObject).forEach(key => toRet += ", ?"); return toRet.substring(2);}()
             })`,
-            Object.values(dataObject), function(data,err) {clearTimeout(timeout); callback(data,err)})
+            Object.values(dataObject), function(data,err) {clearTimeout(timeout); callback(data,err)});
     });
 };
 
@@ -86,10 +86,10 @@ async function execute(sql, params, callback) {
     var timeout = setTimeout(function() {
         // return a json with error message
         callback(null, "timeout");
-    }, 1000)
+    }, 1000);
     // start database interaction
     await db.serialize(function() {
-        console.log("executing: ", sql)
+        console.log("executing: ", sql);
         // find all records with the provided userID and return them as JSON
         db.all(sql,params,(err, rows) => {
             // process rows here 
