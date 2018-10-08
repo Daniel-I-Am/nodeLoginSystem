@@ -50,7 +50,7 @@ const server = http.createServer((req, res) => {
         res.end(fs.readFileSync(__dirname + "/public-html" + path));
     } else {
         // node API callback function
-        callback = function(type, response) {res.setHeader('Content-Type', type); res.end(response);}
+        callback = function(code, type, response) {res.statusCode = code; res.setHeader('Content-Type', type); res.end(response);}
         // define methods based on path extensions
         let methods = {"register": register.register, "login": login.login, "logout": login.logout}
         
@@ -59,10 +59,15 @@ const server = http.createServer((req, res) => {
             // if it's a match, call method and respond
             if (path.endsWith(e)) {
                 // log connection details on server side
-                async function callFunc()     {methods[e](req, callback)}
+                async function callFunc() {methods[e](req, callback)}
+
                 callFunc()
-                    .then(function(_) {log(req, res)})
-                    .catch(function(_) {res.statusCode = 500; log(req, res)});
+                    .then(function() {log(req, res)})
+                    .catch(function(err) {
+                        res.statusCode = 500;
+                        log(req, res);
+                        callback(500, 'application/json', JSON.stringify({"error": err.message}))
+                    });
                 return;
             }
         }
