@@ -16,7 +16,7 @@ async function login(request, callback) {
     });
     request.on('end', async function () {
         try {
-            var post = JSON.parse(body)
+            var post = JSON.parse(body);
             // use post['blah'], etc.
 
             // get the plain text password sent over the wire
@@ -24,12 +24,12 @@ async function login(request, callback) {
             // select the salt that should be stored in the DB
             db.select("users", ["salt"], {"username": post.username}, async function(data, err) {
                 if (err) {
-                    callback('application/json', JSON.stringify({"error": err}));
+                    callback(500, 'application/json', JSON.stringify({"error": err}));
                     return;
                 }
                 // Incorrect username
                 if (data.length <= 0) {
-                    callback('application/json', JSON.stringify({"error": "Username or password incorrect"}));
+                    callback(403, 'application/json', JSON.stringify({"error": "Username or password incorrect"}));
                     return;
                 }
                 // get the salt that was selected
@@ -39,18 +39,18 @@ async function login(request, callback) {
                 // select every detail about the user if the username AND hashed/salted password match
                 db.select("users", ["rowid", "*"], {"username": post.username, "password": password}, async function(data, err) {
                     if (err) {
-                        callback('application/json', JSON.stringify({"error": err}));
+                        callback(500, 'application/json', JSON.stringify({"error": err}));
                         return;
                     }
                     // incorrect password
                     if (data.length == 0) {
-                        callback('application/json', JSON.stringify({"error": "Username or password incorrect"}));
+                        callback(403, 'application/json', JSON.stringify({"error": "Username or password incorrect"}));
                         return;
                     // login details are correct
                     } else {
                         // if there's an error in the query, return it
                         if (err) {
-                            callback('application/json', JSON.stringify({"error": err.message}));
+                            callback(500, 'application/json', JSON.stringify({"error": err.message}));
                         // no error, all was fine
                         } else {
                             // delete the password and salt from the data[0] object, the client side does not need to know those
@@ -62,10 +62,10 @@ async function login(request, callback) {
                             db.insert("tokens", {"userID": data[0].rowid, "token": data[0].token}, function(_, err) {
                                 if (err) {
                                     // return if there were any errors
-                                    callback('application/json', JSON.stringify({"error": err.message}))
+                                    callback(500, 'application/json', JSON.stringify({"error": err.message}));
                                 } else {
                                     // return the data, login successful
-                                    callback('application/json', JSON.stringify(data[0]))
+                                    callback(200, 'application/json', JSON.stringify(data[0]));
                                 }
                             // true === canOverwrite (in DB.insert)
                             }, true); // \db.insert
@@ -75,7 +75,7 @@ async function login(request, callback) {
             }); // \db.select
         } catch(err) {
             // if the original salt selection or anything else going on in the function failed somehow, return the error
-            callback('application/json', JSON.stringify({"error": err.message}))
+            callback(500, 'application/json', JSON.stringify({"error": err.message}));
         }
     });
 }
@@ -128,20 +128,20 @@ function logout(request, callback) {
             db.select("users", ["rowid"], {"username": post.username}, async function(data, err) {
                 if (err) {
                     // report errors
-                    callback('application/json', JSON.stringify({"error": err}));
+                    callback(500, 'application/json', JSON.stringify({"error": err}));
                 } else {
                     if (data.length <= 0) {
-                        callback('application/json', JSON.stringify({"error": "Not logged in"}));
+                        callback(401, 'application/json', JSON.stringify({"error": "Not logged in"}));
                         return;
                     }
                     // delete our token from the tokens table, if we supply the wrong token, nothing will be removed from the database
                     db.delete("tokens", {"userID": data[0].rowid, "token": post.token}, async function(data, err) {
                         if (err) {
                             // report errors
-                            callback('application/json', JSON.stringify({"error": err}));
+                            callback(500, 'application/json', JSON.stringify({"error": err}));
                         } else {
                             // report no errors
-                            callback('application/json', JSON.stringify({"error": null}));
+                            callback(200, 'application/json', JSON.stringify({"error": null}));
                         };
                     });
                 };

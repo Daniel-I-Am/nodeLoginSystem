@@ -27,7 +27,7 @@ async function register(request, callback) {
             await registerDB(post.username, password, salt, callback);
         } catch(err) {
             // return error, if one occurs
-            callback('application/json', JSON.stringify({"error": err.message}));
+            callback(500, 'application/json', JSON.stringify({"error": err.message}));
         }
     });
 }
@@ -37,10 +37,16 @@ async function registerDB(username, password, salt, callback) {
     try {
         // try to insert the new user details into the database
         db.insert("users", {"username": username, "password": password, "salt": salt}, 
-            function(data,err) {callback('application/json', JSON.stringify(err ? {"error": err.message} : {"data": data}))}, false);
+            function(data,err) {
+                if (err) {
+                    callback(500, 'application/json', JSON.stringify({"error": err.message}));
+                } else {
+                    callback(500, 'application/json', JSON.stringify({"data": data}));
+                }
+            }, false);
     } catch(err) {
         // catch any errors, including `SQLITE_RESTRAINT: UNIQUE`
-        callback('application/json', JSON.stringify({"error": err.message}));
+        callback(500, 'application/json', JSON.stringify({"error": err.message}));
     }
 }
 
