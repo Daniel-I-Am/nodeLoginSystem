@@ -1,6 +1,6 @@
 nav {
     display: grid;
-    grid-template: auto / minmax(200px, 40%) repeat(5, auto);
+    grid-template: auto / minmax(200px, 40%) auto;
     padding: 1em;
     background-color: var(--nav-bar-color);
     color: white;
@@ -10,7 +10,7 @@ nav h1 {
     padding-left: 2em;
 }
 
-nav *:not(h1) {
+nav a {
     border: .2em solid white;
     border-radius: .5em;
     padding: .2em 2em;
@@ -19,10 +19,54 @@ nav *:not(h1) {
     transition: all 150ms ease-in-out;
 }
 
-nav *:not(h1):hover {
+nav a:hover {
     border-color: black;
     color: black;
     background-color: white;
+}
+
+nav ul {
+    display: grid;
+    grid-template: auto / repeat(3, auto);
+}
+
+li {
+    display: block;
+    transition-duration: 0.5s;
+}
+
+li:hover {
+    cursor: pointer;
+}
+
+ul li {
+    position: relative;
+}
+
+ul li ul {
+    background-color: var(--nav-bar-color);
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    transition: all 0.5s ease;
+    margin-top: 1rem;
+    left: -1em;
+    display: none;
+}
+
+ul li:hover > ul,
+ul li ul:hover {
+    visibility: visible;
+    opacity: 1;
+    display: block;
+}
+
+ul li ul li {
+    padding: 1em;
+    padding-left: inherit;
+    margin-left: 1em;
+    clear: both;
+    width: 100%;
 }
 
 @media screen and (max-width: 940px) {

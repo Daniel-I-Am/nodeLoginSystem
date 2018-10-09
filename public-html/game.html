@@ -14,11 +14,17 @@
 <body>
     <nav>
         <h1>Game</h1>
-        <a href="./">Home</a>
-        <a href="./game.html">Game</a>
-        <a href="./register.html">Register</a>
-        <a href="./login.html">Login</a>
-        <a class="logout" href="./logout">Logout</a>
+        <ul>
+            <li><a href="./">Home</a></li>
+            <li><a href="./game.html">Game</a></li>
+            <li><a href="./profile.html">Profile</a>
+                <ul class="profileDropdown">
+                    <li><a href="./register.html">Register</a></li>
+                    <li><a href="./login.html">Login</a></li>
+                    <li><a class="logout" href="./logout">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
     </nav>
     <main>
         <canvas width=800px height=600px />
