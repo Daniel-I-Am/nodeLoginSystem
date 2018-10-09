@@ -14,7 +14,7 @@ nav a {
     border: .2em solid white;
     border-radius: .5em;
     padding: .2em 2em;
-    margin: auto;
+    margin: 1em auto;
     color: white;
     transition: all 150ms ease-in-out;
 }
@@ -30,41 +30,42 @@ nav ul {
     grid-template: auto / repeat(3, auto);
 }
 
-li {
+nav li {
     display: block;
     transition-duration: 0.5s;
 }
 
-li:hover {
+nav li:hover {
     cursor: pointer;
 }
 
-ul li {
+nav ul li {
     position: relative;
 }
 
-ul li ul {
+nav ul li ul {
     background-color: var(--nav-bar-color);
     visibility: hidden;
     opacity: 0;
     position: absolute;
     transition: all 0.5s ease;
-    margin-top: 1rem;
+    margin-top: .5rem;
+    padding-top: .5rem;
     left: -1em;
     display: none;
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
 }
 
-ul li:hover > ul,
-ul li ul:hover {
+nav ul li:hover > ul,
+nav ul li ul:hover {
     visibility: visible;
     opacity: 1;
     display: block;
 }
 
-ul li ul li {
+nav ul li ul li {
     padding: 1em;
-    padding-left: inherit;
-    margin-left: 1em;
     clear: both;
     width: 100%;
 }
